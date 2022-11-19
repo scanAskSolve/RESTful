@@ -29,4 +29,10 @@ public class LineController {
         lineService.pushMessage(pushMessageRo);
         return "OK";
     }
+
+    @GetMapping("/history/{userId}")
+    @ResponseBody
+    public Object getHistory(@PathVariable("userId") String userId,@RequestParam(defaultValue = "10") int size) {
+        return lineService.getHistory(userId,size);
+    }
 }

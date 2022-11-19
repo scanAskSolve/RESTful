@@ -1,6 +1,7 @@
 package com.yijyun.restful.service;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yijyun.restful.model.MessageItem;
 import com.yijyun.restful.pojo.ro.LinePushMessageRo;
 import com.yijyun.restful.pojo.ro.PushMessageRo;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +36,7 @@ public class LineService {
     public void lineEvent(WebhookEventRo webhookEventRo) {
         for (WebhookEventRo.EventsDTO eventsDTO : webhookEventRo.getEvents()) {
             if (Objects.equals(eventsDTO.getMessage().getType(), "text")) {
-                MessageItem messageItem = new MessageItem(eventsDTO.getSource().getUserId(), eventsDTO.getMessage().getText());
+                MessageItem messageItem = new MessageItem(eventsDTO.getSource().getUserId(), eventsDTO.getMessage().getText(),Long.toString(eventsDTO.getTimestamp()));
                 messageRepository.insert(messageItem);
             }
         }
@@ -76,5 +78,11 @@ public class LineService {
         httpPost.setHeader("Authorization", "Bearer kob3B6QKvtJZ/TZjMMS4TVD3H0z8JuuIKvdqJLtlMJPwSW7zphdBkjJd1FK4VSN4GkxtP/z6neoJVhrnY3tWbpgSUiG7GALWan+Jlqup1/kMCsJOtOIDj5HRvInqbxrbPtYFxgZns2xf/yES0KXa/gdB04t89/1O/w1cDnyilFU=");
         CloseableHttpResponse response = client.execute(httpPost);
         return EntityUtils.toString(response.getEntity());
+    }
+    public String getHistory(String userId,Integer size){
+        List<MessageItem> messageItem =  messageRepository.findMessageItemByUserId(userId,size);
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<MessageItem>>(){}.getType();
+        return gson.toJson(messageItem, listType);
     }
 }
