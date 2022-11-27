@@ -30,6 +30,9 @@ public class LineService {
 
     @Value("${message_push}")
     String pushApi;
+
+    @Value("${channel_access_token}")
+    String channelAccessToken;
     @Autowired
     MessageRepository messageRepository;
 
@@ -75,7 +78,7 @@ public class LineService {
         httpPost.setEntity(entity);
 
         httpPost.setHeader("Content-type", "application/json; charset=UTF-8");
-        httpPost.setHeader("Authorization", "Bearer kob3B6QKvtJZ/TZjMMS4TVD3H0z8JuuIKvdqJLtlMJPwSW7zphdBkjJd1FK4VSN4GkxtP/z6neoJVhrnY3tWbpgSUiG7GALWan+Jlqup1/kMCsJOtOIDj5HRvInqbxrbPtYFxgZns2xf/yES0KXa/gdB04t89/1O/w1cDnyilFU=");
+        httpPost.setHeader("Authorization", "Bearer " + channelAccessToken);
         CloseableHttpResponse response = client.execute(httpPost);
         return EntityUtils.toString(response.getEntity());
     }
